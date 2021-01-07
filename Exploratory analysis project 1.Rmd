@@ -1,0 +1,73 @@
+---
+title: "Exploratory analysis project 1"
+author: "Haichen"
+date: "1/6/2021"
+output: pdf_document
+---
+## Overview 
+
+This assignment uses data from the UC Irvine Machine Learning Repository, a popular repository for machine learning datasets. In particular, we will be using the “Individual household electric power consumption Data Set”.
+The dataset has 2,075,259 rows and 9 columns. First calculate a rough estimate of how much memory the dataset will require in memory before reading into R. Make sure your computer has enough memory (most modern computers should be fine).
+We will only be using data from the dates 2007-02-01 and 2007-02-02. One alternative is to read the data from just those dates rather than reading in the entire dataset and subsetting to those dates.
+
+## Get Data
+```{r Get Data}
+setwd("C:/Coursera/Exploratory data analysis")
+data <- read.table("household_power_consumption.txt", header= TRUE, sep=";", stringsAsFactors=FALSE, dec=".")
+subsetdata <- data[data$Date %in% c("1/2/2007","2/2/2007"),]
+str(subsetdata)
+globalActivePower <- as.numeric(subsetdata$Global_active_power)
+globalReactivePower <- as.numeric(subsetdata$Global_reactive_power)
+voltage <- as.numeric(subsetdata$Voltage)
+subMetering1 <- as.numeric(subsetdata$Sub_metering_1)
+subMetering2 <- as.numeric(subsetdata$Sub_metering_2)
+subMetering3 <- as.numeric(subsetdata$Sub_metering_3)
+```
+
+## R Histogram
+
+
+```{r histogram}
+hist(globalActivePower, col="red", main="Global Active Power", xlab="Global Active Power (kilowatts)")
+```
+
+## Time Series
+
+
+```{r time series}
+datetime <- strptime(paste(subsetdata$Date, subsetdata$Time, sep=" "), "%d/%m/%Y %H:%M:%S") 
+plot(datetime, globalActivePower, type="l", xlab="", ylab="Global Active Power (kilowatts)")
+```
+
+
+## Plot for sub metering
+
+```{r plot 3}
+plot(datetime, subMetering1, type="l", ylab="Energy Submetering", xlab="")
+lines(datetime, subMetering2, type="l", col="red")
+lines(datetime, subMetering3, type="l", col="blue")
+legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=1, lwd=2.5, col=c("black", "red", "blue"))
+```
+
+
+## Multiple plot
+
+
+```{r plot 4}
+par(mfrow = c(2, 2)) 
+# First plot
+plot(datetime, globalActivePower, type="l", xlab="", ylab="Global Active Power", cex=0.2)
+# Second plot
+plot(datetime, voltage, type="l", xlab="datetime", ylab="Voltage")
+# Third plot
+plot(datetime, subMetering1, type="l", ylab="Energy Submetering", xlab="")
+lines(datetime, subMetering2, type="l", col="red")
+lines(datetime, subMetering3, type="l", col="blue")
+legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=, lwd=2.5, col=c("black", "red", "blue"), bty="o")
+# Fourth plot
+plot(datetime, globalReactivePower, type="l", xlab="datetime", ylab="Global_reactive_power", cex=0.2)
+```
+
+
+
+
